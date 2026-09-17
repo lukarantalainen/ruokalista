@@ -9,6 +9,8 @@ from typing import NamedTuple
 ASIAKAS = 96786
 KEITTIO = 10
 
+cache: dict = {'updated': datetime.datetime.now(), 'data': {}}
+
 def get_menu_json(start: datetime.datetime, end: datetime.datetime) -> dict:
     # Gradia Viitaniemi: Asiakas = 96786, Keittiö = 10
     url = f"https://fi.jamix.cloud/apps/menuservice/rest/haku/menu/{ASIAKAS}/{KEITTIO}?lang=fi&date={start}&date2={end}"
@@ -59,9 +61,20 @@ def get_data_today(today) -> dict:
     return get_menu_json(today, today)
 
 def get_data_week(today) -> dict:
+    global cache
     start = get_prev_monday(today)
     end = get_next_friday(today)
     return get_menu_json(start, end)
 
 def get_menu(date: datetime.datetime) -> list[list[Dish]]:
-    return get_dishes(get_data_week(date))
+    global cache
+    print(cache["updated"])
+    if cache["updated"] + datetime.timedelta(days=1) > datetime.datetime.now() and cache["data"] != {}:
+        print("using cache")
+        return get_dishes(cache["data"])
+    else:
+        cache["updated"] = datetime.datetime.now()
+        data = get_data_week(date)
+        cache["data"] = data
+        return get_dishes(data)
+        

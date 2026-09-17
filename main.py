@@ -1,7 +1,9 @@
 import discord
+from discord.ext import commands
 import jamixapi
 import datetime
 import priimusapi
+import traceback
 
 from jamixapi import Dish
 
@@ -68,6 +70,7 @@ def format_menu(menu: list[list[Dish]]) -> str:
         for meal in day:
             lines.append(f"{meal.mealtype + ": " + meal.mealname}")
         weekday += 1
+        
 
     return "\n".join(lines)
 
@@ -171,6 +174,11 @@ class MyClient(discord.Client):
         menu_text = format_menu(menu)
         embed = discord.Embed(title="Viikon ruokalista", description=menu_text)
 
+        if today.month == 2 and today.day == 14:
+            embed.set_footer(
+                text="P.S. Minä rakastan sinua!!! 😍"
+            )
+
         await interaction.followup.send(embed=embed)
 
 intents = discord.Intents.default()
@@ -180,12 +188,6 @@ load_dotenv()
 
 TOKEN = os.getenv("DISCORD_TOKEN")
 
-if TOKEN == None:
-    raise RuntimeError("Invalid token")
-
 bot = MyClient(intents=intents)
-<<<<<<< HEAD:itonjumala.py
-bot.run(token)
-=======
 bot.run(TOKEN)
->>>>>>> bdfab4b (gets the menu for the whole week):main.py
+
