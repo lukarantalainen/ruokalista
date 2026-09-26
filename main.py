@@ -3,10 +3,34 @@ from discord.ext import commands
 import jamixapi
 import datetime
 import priimusapi
-import traceback
 
 from jamixapi import Dish
+try:
+    import ctypes
 
+    kernel32 = ctypes.windll.kernel32 #type: ignore
+    kernel32.SetConsoleMode(kernel32.GetStdHandle(-10), 0x0004)
+except Exception:  # noqa: S110
+    pass
+
+import logging
+from logger import GooberFormatter
+
+logger = logging.getLogger("ruokalogger ")
+logger.setLevel(logging.DEBUG)
+
+console_handler = logging.StreamHandler()
+console_handler.setLevel(logging.DEBUG)
+console_handler.setFormatter(GooberFormatter())
+
+file_handler = logging.FileHandler("log.txt", mode="w+", encoding="UTF-8")
+file_handler.setLevel(logging.DEBUG)
+file_handler.setFormatter(GooberFormatter(colors=False))
+
+logger.addHandler(console_handler)
+logger.addHandler(file_handler)
+
+logger.info("Starting...")
 
 import os 
 from dotenv import load_dotenv
@@ -53,7 +77,7 @@ def format_ruokalista(ruokalista) -> str:
         return "\n".join(f"• {line}" for line in lines)
 
     except Exception as e:
-        print(f"Ruokalistan parsevirhe: {e}")
+        logger.info(f"Ruokalistan parsevirhe: {e}")
         return "⚠️ Virhe: Ruokalistan jäsentäminen epäonnistui."
 
 def format_menu(menu: list[list[Dish]]) -> str:
@@ -75,10 +99,10 @@ def format_menu(menu: list[list[Dish]]) -> str:
     return "\n".join(lines)
 
     
-class MyClient(discord.Client):
+class MyClient(commands.Bot):
     def __init__(self, *, intents: discord.Intents):
-        super().__init__(intents=intents)
-        self.tree = discord.app_commands.CommandTree(self)
+        super().__init__(intents=intents, command_prefix="aah")
+        # self.tree = discord.app_commands.CommandTree(self)
 
     async def setup_hook(self):
         self.tree.add_command(
@@ -105,10 +129,11 @@ class MyClient(discord.Client):
         )
 
         synced = await self.tree.sync()
-        print(f"Synced {len(synced)} commands")
+        logger.info(f"Synced {len(synced)} commands")
 
     async def on_ready(self):
-        print(f"Logged on as {self.user}!")
+        await load_cogs_from_folder(self)
+        logger.info(f"Logged on as {self.user}!")
 
     async def ruoka_command(self, interaction: discord.Interaction):
         nyt = datetime.datetime.now()
@@ -181,6 +206,11 @@ class MyClient(discord.Client):
 
         await interaction.followup.send(embed=embed)
 
+    async def priimus_get_week(self, interaction: discord.Interaction):
+        await interaction.response.defer()
+
+        
+
 intents = discord.Intents.default()
 intents.message_content = True
 
@@ -189,7 +219,22 @@ load_dotenv()
 TOKEN = os.getenv("DISCORD_TOKEN")
 
 if TOKEN == None:
-    raise ValueError
+    raise ValueError()
+
+async def load_cogs_from_folder(bot: commands.Bot, folder_name="assets/cogs"):
+    for filename in [file for file in os.listdir(folder_name) if file.endswith(".py")]:
+        cog_name: str = filename[:-3]
+
+        logger.info("loading cog")
+
+        module_path = folder_name.replace("/", ".").replace("\\", ".") + f".{cog_name}"
+
+        try:
+            await bot.load_extension(module_path)
+
+        except Exception as e:
+            logger.error(f"hey {cog_name} {e}")
+
 
 bot = MyClient(intents=intents)
 bot.run(TOKEN)

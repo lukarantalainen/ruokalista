@@ -5,6 +5,8 @@
 import requests
 import datetime
 from typing import NamedTuple
+import logging
+logger = logging.getLogger("ruokalogger")
 
 ASIAKAS = 96786
 KEITTIO = 10
@@ -18,7 +20,7 @@ def get_menu_json(start: datetime.datetime, end: datetime.datetime) -> dict:
         data = requests.get(url).json()
         return data
     except:
-        print("[-] JSON tietojen haku epäonnistui!")
+        logger.info("[-] JSON tietojen haku epäonnistui!")
         return {}
 
 class Dish(NamedTuple):
@@ -48,7 +50,7 @@ def get_dishes(ruokalista) -> list[list[Dish]]:
 
         return ruoat
     except Exception as e:
-        print(e)
+        logger.info(e)
         return []
 
 def get_next_friday(today) -> datetime.datetime:
@@ -68,9 +70,11 @@ def get_data_week(today) -> dict:
 
 def get_menu(date: datetime.datetime) -> list[list[Dish]]:
     global cache
-    print(cache["updated"])
+    logger.info(cache["updated"])
     if cache["updated"] + datetime.timedelta(days=1) > datetime.datetime.now() and cache["data"] != {}:
-        print("using cache")
+        logger.info("using cache")
+        
+        
         return get_dishes(cache["data"])
     else:
         cache["updated"] = datetime.datetime.now()

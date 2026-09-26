@@ -5,6 +5,9 @@ from dataclasses import dataclass
 from typing import List, Literal, get_args
 import time
 import datetime
+import logging
+
+logger = logging.getLogger("ruokalogger")
  
 Days = Literal["Maanantai", "Tiistai", "Keskiviikko", "Torstai", "Perjantai"]
  
@@ -24,6 +27,9 @@ class PriimusMenu:
         self.__data: ListedMenu | None = None
         self.__last_refresh: int = 0
         pass
+
+    def print_self(self):
+        print(self.__data)
  
     async def refresh_data(self) -> None:
         content = await self.__get_page()
@@ -60,25 +66,25 @@ class PriimusMenu:
             if menu.day != day: continue
             return menu
  
-    def __parse_page(self, content: str) -> ListedMenu | None: # huom: jos ongelmia, ota printit takas, auttaa varmasti paljon
-        soup = BeautifulSoup(content)
+    def __parse_page(self, content: str) -> ListedMenu | None: # huom: jos ongelmia, ota logger.infoit takas, auttaa varmasti paljon
+        soup = BeautifulSoup(content, features="html.parser")
         menu_container: Tag | None = soup.select_one("#block-gradia-content > article > div.l-article__content.l-article__content--page > div.field--item")
  
         if menu_container is None:
-            print("ÄÄH")
+            logger.info("ÄÄH")
             return None
         
         week_info: Tag | None = menu_container.select_one("p > strong")
         
         if week_info is None or "Vko" not in week_info.text:
-            print("Ruokalista viikkonumero ei annettu")
+            logger.info("Ruokalista viikkonumero ei annettu")
             return None
  
         week_number: int = -1
         try:
             week_number = int(week_info.get_text().split(" ")[1].replace(",", ""))
         except ValueError as _:
-            print(f"Viikkonumeron parse epäonnostui, teksti: `{week_info.get_text()}`",)
+            logger.info(f"Viikkonumeron parse epäonnostui, teksti: `{week_info.get_text()}`",)
  
         menu_items: List[Tag] | None = menu_container.select("p")
  
@@ -88,12 +94,12 @@ class PriimusMenu:
             day_el: Tag | None = item.select_one("strong:last-of-type")
  
             if not day_el:
-                # print("Couldnt find for: " + repr(item))
+                # logger.info("Couldnt find for: " + repr(item))
                 continue
             
             day: Days = day_el.get_text() # type: ignore
             if day not in get_args(Days):
-                # print(f"Day {day} isnt real")
+                # logger.info(f"Day {day} isnt real")
                 continue
  
             food_items: List[str] = []
@@ -117,7 +123,20 @@ class PriimusMenu:
                 async with session.get("https://www.gradia.fi/ravintola-priimus/opiskelija-ja-henkilostolounas") as resp:
                     return await resp.text()
             except Exception as e:
-                print(e)
+                logger.info(e)
                 return ""
             
 ## SPECIAL THANKS FOR THIS CODE: ONNI N. (L25C)
+
+
+
+async def main():
+    p = PriimusMenu()
+
+    menu = await p.get_menu()
+    if menu:
+        for item in menu.menus:
+            print(item.day, item.items)
+    
+
+asyncio.run(main())
