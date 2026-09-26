@@ -188,6 +188,9 @@ load_dotenv()
 
 TOKEN = os.getenv("DISCORD_TOKEN")
 
+if TOKEN == None:
+    raise ValueError
+
 bot = MyClient(intents=intents)
 bot.run(TOKEN)
 
