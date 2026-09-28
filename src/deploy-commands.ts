@@ -9,9 +9,9 @@ const token = process.env.DISCORD_TOKEN;
 const clientId = process.env.CLIENT_ID;
 const guildId = process.env.GUILD_ID;
 
-if (token == undefined) throw new Error("Invalid token");
-if (clientId == undefined) throw new Error("Invalid client id");
-if (guildId == undefined) throw new Error("Invalid guild id");
+if (!token) throw new Error("Invalid token");
+if (!clientId) throw new Error("Invalid client id");
+if (!guildId) throw new Error("Invalid guild id");
 
 
 const commands = [];

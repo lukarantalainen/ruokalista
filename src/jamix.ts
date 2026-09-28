@@ -131,6 +131,3 @@ async function getMenuWeek() {
 
   return data;
 }
-
-
-

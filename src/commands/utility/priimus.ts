@@ -4,7 +4,7 @@ import * as cheerio from "cheerio";
 export const data = new SlashCommandBuilder().setName('pong').setDescription('Priimuksen ruokalista tälle päivälle.');
 
 export async function execute(interaction: any) {
-	await interaction.reply('Pong!');
+	await interaction.reply(await getMenu());
 }
 
 async function getMenu(): Promise<string | null> {
@@ -18,5 +18,3 @@ async function getMenu(): Promise<string | null> {
 
 	return element.html();
 }
-
-console.log(await getMenu());

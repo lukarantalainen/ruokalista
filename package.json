@@ -12,6 +12,7 @@
   },
   "scripts": {
     "dev": "npx tsx src",
+    "update": "npx tsc && node dist/deploy-commands.js",
     "build": "tsup src/index.ts --format esm --out-dir dist",
     "start": "node dist/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"

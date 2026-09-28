@@ -1,25 +1,15 @@
 import fs from "node:fs"
 import path from "node:path"
 import { Client, Events, GatewayIntentBits, Collection, MessageFlags } from "discord.js";
+import type { Interaction } from "discord.js";
 import dotenv from "dotenv";
-
-declare module "discord.js" {
-  interface Client {
-    commands: Collection<any, any>;
-  }
-}
+import type { ClientEvent } from "./types/client-event.js";
 
 dotenv.config()
 
 const token = process.env.DISCORD_TOKEN
 
 const client = new Client({ intents: [GatewayIntentBits.Guilds] });
-
-client.once(Events.ClientReady, (readyClient: any) => {
-  console.log(`Ready! Logged in as ${readyClient.user.tag}`)
-})
-
-client.login(token);
 
 client.commands = new Collection();
 
@@ -41,33 +31,18 @@ for (const folder of commandFolders) {
   }
 }
 
-client.on(Events.InteractionCreate, (interaction) => {
-	console.log(interaction);
-});
+const eventsPath = path.join(import.meta.dirname, "events");
+const eventFiles = fs.readdirSync(eventsPath);
 
-client.on(Events.InteractionCreate, async (interaction)  => {
-	if (!interaction.isChatInputCommand()) return; 
-	const command = interaction.client.commands.get(interaction.commandName);
-	if (!command) {
-		console.error(`No command matching ${interaction.commandName} was found.`);
-		return;
+for (const file of eventFiles) {
+	const filePath = path.join(eventsPath, file);
+	const event: ClientEvent = await import(filePath);
+
+	if (event.once) {
+		client.once(event.name, (...args: any[]) => event.execute(...args));
+	} else {
+		client.on(event.name, (...args: any[]) => event.execute(...args));
 	}
-	try {
-		await command.execute(interaction);
-	} catch (error) {
-		console.error(error);
-		if (interaction.replied || interaction.deferred) {
-			await interaction.followUp({
-				content: 'There was an error while executing this command!',
-				flags: MessageFlags.Ephemeral,
-			});
-		} else {
-			await interaction.reply({
-				content: 'There was an error while executing this command!',
-				flags: MessageFlags.Ephemeral,
-			});
-		}
-	}
-});
+}
 
-
+client.login(token);
