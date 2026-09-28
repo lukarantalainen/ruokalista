@@ -1,11 +1,10 @@
-import { SlashCommandBuilder, ButtonBuilder, ActionRowBuilder, ButtonStyle,  } from "discord.js";
-import type { Interaction } from "discord.js";
+import { SlashCommandBuilder, ButtonBuilder, ActionRowBuilder, ButtonStyle, } from "discord.js";
+import type { ButtonInteraction, Interaction } from "discord.js";
 
 export const data = new SlashCommandBuilder().setName('button').setDescription('Priimuksen ruokalista tälle päivälle.');
 
 export async function execute(interaction: Interaction) {
   if (!interaction.isChatInputCommand()) return;
-
 
   const target = interaction.options.getUser('target');
   const reason = interaction.options.getString('reason') ?? 'No reason provided';
@@ -17,4 +16,18 @@ export async function execute(interaction: Interaction) {
     components: [row]
   });
 
+}
+
+export async function confirmCallback(interaction: ButtonInteraction) {
+  await interaction.update({
+    content: "Ban confirmed!",
+    components: [],
+  });
+}
+
+export async function cancelCallback(interaction: ButtonInteraction) {
+  await interaction.update({
+    content: "Ban canceled!",
+    components: [],
+  });
 }
