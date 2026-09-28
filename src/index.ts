@@ -1,7 +1,6 @@
 import fs from "node:fs"
 import path from "node:path"
-import { Client, Events, GatewayIntentBits, Collection, MessageFlags } from "discord.js";
-import type { Interaction } from "discord.js";
+import { Client, GatewayIntentBits, Collection } from "discord.js";
 import dotenv from "dotenv";
 import type { ClientEvent } from "./types/client-event.js";
 

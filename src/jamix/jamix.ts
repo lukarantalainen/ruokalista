@@ -20,7 +20,6 @@ function getMonday(date: Date) {
   let d = new Date(date);
 
   d.setDate(d.getDate() - (d.getDay() + 6) % 7);
-  console.log(d.getDay());
   return d;
 }
 
@@ -28,7 +27,6 @@ function getFriday(date: Date) {
   let d = new Date(date);
 
   d.setDate(d.getDate() + (5 + 7 - d.getDay()) % 7);
-  console.log(d.getDay());
   return d;
 }
 
@@ -51,7 +49,6 @@ function formatDate(date: Date) {
 
 
 async function getMenuJson(start: string, end: string) {
-  console.log(`https://fi.jamix.cloud/apps/menuservice/rest/haku/menu/96786/10?lang=fi&date=${start}&date2=${end}`);
   const response = await fetch(`https://fi.jamix.cloud/apps/menuservice/rest/haku/menu/96786/10?lang=fi&date=${start}&date2=${end}`);
 
   return response.json();
