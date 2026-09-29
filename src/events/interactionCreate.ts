@@ -1,6 +1,6 @@
 import { Events, MessageFlags, type Interaction } from "discord.js";
 import { confirmCallback, cancelCallback } from "../commands/utility/button.js";
-import { showWeek } from "../commands/utility/lyseo.js";
+import { nextCallback, previousCallback, showDayCallback, showWeekCallback } from "../commands/utility/lyseo.js";
 
 export const name = Events.InteractionCreate;
 
@@ -11,7 +11,13 @@ export async function execute(interaction: Interaction) {
     } else if (interaction.customId == "cancel") {
       await cancelCallback(interaction);
     } else if (interaction.customId == "show-week") {
-      await showWeek(interaction);
+      await showWeekCallback(interaction);
+    } else if (interaction.customId == "show-day") {
+      await showDayCallback(interaction);
+    } else if (interaction.customId == "previous") {
+      await previousCallback(interaction);
+    } else if (interaction.customId == "next") {
+      await nextCallback(interaction);
     }
     return;
   }

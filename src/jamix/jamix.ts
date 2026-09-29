@@ -1,5 +1,5 @@
 import { LRUCache } from "lru-cache";
-
+import { Day } from "../types/day.js";
 
 const options = {
   max: 1,
@@ -46,8 +46,6 @@ function formatDate(date: Date) {
   return [year, month, day].join('');
 }
 
-
-
 async function getMenuJson(start: string, end: string) {
   const response = await fetch(`https://fi.jamix.cloud/apps/menuservice/rest/haku/menu/96786/10?lang=fi&date=${start}&date2=${end}`);
 
@@ -74,51 +72,82 @@ class MenuItem {
   }
 }
 
-function formatMenu(menu: Array<Array<MenuItem>>) {
+class MenuDay {
+  day: Day = Day.None;
+  items: Array<MenuItem> = [];
 
-  let lines: string[] = [];
-
-  let weekday = 0
-  const today = (new Date().getDay() + 6) % 7;
-  for (let day of menu) {
-    if (weekday >= 5) break;
-    if (weekday == today) {
-
-      lines.push("__**" + WEEKDAYS_FI[weekday] + "**__")
-    }
-    else {
-      lines.push("**" + WEEKDAYS_FI[weekday] + "**")
-    }
-    for (let meal of day) {
-      lines.push(`${meal.mealtype}: ${meal.mealname}`);
-    }
-    weekday += 1
+  constructor(day: number) {
+    this.day = day;
   }
 
+  public push(item: MenuItem): void {
+    this.items.push(item);
+  }
+}
+
+function formatMenu(menu: Array<MenuDay>) {
+  let lines: string[] = [];
+
+  for (let menuDay of menu) {
+    lines.push(formatDish(menuDay));
+  }
   return lines.join('\n');
 }
 
 export async function getMenuWeekString() {
-  return formatMenu(getDishes(await getMenuWeek()));
+  const data = await getMenuWeek();
+  const dishes = await getDishes(data);
+  return formatMenu(dishes);
 }
 
-function getDishes(menu: any): Array<Array<MenuItem>> {
-  let dishes: Array<Array<MenuItem>> = [];
+async function getMenuDay(day: Day): Promise<MenuDay> {
+  const dishes = await getDishes(await getMenuWeek());
+  if (dishes.length && dishes[day]) {
+    return dishes[day];
+  } else {
+    return new MenuDay(Day.None);
+  }
+}
 
+export async function getMenuDayString(offset: number = 0): Promise<string> {
+  const today = (new Date().getDay() + 6) % 7;
+  const menuDay = await getMenuDay(today + offset);
+  return formatDish(menuDay);
+}
+
+function formatDish(menuDay: MenuDay) {
+  const today = (new Date().getDay() + 6) % 7;
+  const day = menuDay.day;
+  let lines: string[] = [];
+  lines.push("**" + WEEKDAYS_FI[day] + "**")
+
+  for (let meal of menuDay.items) {
+    lines.push(`${meal.mealtype}: ${meal.mealname}`);
+
+  }
+  return lines.join('\n');
+}
+
+async function getDishes(menu: any): Promise<Array<MenuDay>> {
+  let dishes: Array<MenuDay> = [];
+
+  let day = 0;
   for (const days of menu[0].menuTypes[0].menus[0].days) {
-    let date: Array<MenuItem> = [];
+    let date: MenuDay = new MenuDay(day);
     for (let mealOption of days.mealoptions) {
       const mealtype = mealOption.name;
       for (const item of mealOption.menuItems) {
         const mealName = String(item.name).toLowerCase();
         let dish = new MenuItem(mealtype, mealName);
 
-        date.push(dish)
+        date.push(dish);
       }
     }
+    day += 1;
 
     dishes.push(date);
   }
+
   return dishes;
 }
 
