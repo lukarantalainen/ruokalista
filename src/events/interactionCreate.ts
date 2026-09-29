@@ -10,6 +10,8 @@ export async function execute(interaction: Interaction) {
       await confirmCallback(interaction);
     } else if (interaction.customId == "cancel") {
       await cancelCallback(interaction);
+    } else if (interaction.customId == "refresh-week") {
+      await showWeekCallback(interaction);
     } else if (interaction.customId == "show-week") {
       await showWeekCallback(interaction);
     } else if (interaction.customId == "show-day") {

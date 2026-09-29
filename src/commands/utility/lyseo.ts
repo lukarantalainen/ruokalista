@@ -1,5 +1,5 @@
-import { EmbedBuilder, SlashCommandBuilder, ButtonBuilder, ActionRowBuilder, ButtonStyle } from "discord.js";
-import { ButtonInteraction, type Interaction } from "discord.js";
+import { EmbedBuilder, SlashCommandBuilder, ButtonBuilder, ActionRowBuilder, ButtonStyle, ButtonInteraction } from "discord.js";
+import type { Interaction } from "discord.js";
 import { getMenuWeekString, getMenuDayString } from "../../jamix/jamix.js";
 
 export const data = new SlashCommandBuilder().setName('lyseo').setDescription('Lyseon ruokalista.');
@@ -31,7 +31,8 @@ async function buildButtonsDay(): Promise<ActionRowBuilder<ButtonBuilder>> {
 
 async function buildButtonsWeek(): Promise<ActionRowBuilder<ButtonBuilder>> {
   const week = new ButtonBuilder().setCustomId("show-day").setLabel("Näytä päivä").setStyle(ButtonStyle.Primary);
-  const row = new ActionRowBuilder<ButtonBuilder>().addComponents(week);
+  const refresh = new ButtonBuilder().setCustomId("refresh-week").setLabel("Päivitä").setStyle(ButtonStyle.Secondary);
+  const row = new ActionRowBuilder<ButtonBuilder>().addComponents(refresh, week);
 
   return row;
 }
