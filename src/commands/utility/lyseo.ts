@@ -1,4 +1,4 @@
-import { EmbedBuilder, SlashCommandBuilder, ButtonBuilder, ActionRowBuilder, ButtonStyle, ButtonInteraction } from "discord.js";
+import { EmbedBuilder, SlashCommandBuilder, ButtonBuilder, ActionRowBuilder } from "discord.js";
 import type { Interaction } from "discord.js";
 import { getMenuDayString } from "../../jamix/jamix.js";
 import * as Week from "../../buttons/lyseo/week.js";

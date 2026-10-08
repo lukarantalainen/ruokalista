@@ -16,53 +16,31 @@ async function fetchUpdatedData(key: any): Promise<any> {
   return cache.get(key);
 }
 
-function getMonday(date: Date) {
+function getMonday(date: Date): Date {
   let d = new Date(date);
 
   d.setDate(d.getDate() - (d.getDay() + 6) % 7);
   return d;
 }
 
-function getFriday(date: Date) {
+function getFriday(date: Date): Date {
   let d = new Date(date);
 
   d.setDate(d.getDate() + (5 + 7 - d.getDay()) % 7);
   return d;
 }
 
-function formatDate(date: Date) {
-  let day = '' + date.getDate();
-  let month = '' + (date.getMonth() + 1);
-  let year = date.getFullYear();
-
-  if (day.length < 2) {
-    day = '0' + day;
-  }
-
-  if (month.length < 2) {
-    month = '0' + month;
-  }
-
-  return [year, month, day].join('');
+function formatDate(date: Date): string {
+  const dateStr = date?.toISOString()?.split('T')[0]?.replaceAll('-', '');
+  return (dateStr || "");
 }
 
-async function getMenuJson(start: string, end: string) {
-  const response = await fetch(`https://fi.jamix.cloud/apps/menuservice/rest/haku/menu/96786/10?lang=fi&date=${start}&date2=${end}`);
+async function getMenuJson(start: string, end: string): Promise<Record<any, any>> {
+  const url = `https://fi.jamix.cloud/apps/menuservice/rest/haku/menu/96786/10?lang=fi&date=${start}&date2=${end}`;
+  const response = await fetch(url);
 
   return response.json();
 }
-
-const WEEKDAYS_FI = [
-  "Maanantai",
-  "Tiistai",
-  "Keskiviikko",
-  "Torstai",
-  "Perjantai",
-  "Lauantai",
-  "Sunnuntai",
-];
-
-
 
 function formatMenu(menu: Array<MenuDay>) {
   let lines: string[] = [];
@@ -94,11 +72,21 @@ export async function getMenuDayString(offset: number = 0): Promise<string> {
   return formatDish(menuDay);
 }
 
+function getDayName(day: Day): string {
+  return ["Maanantai",
+    "Tiistai",
+    "Keskiviikko",
+    "Torstai",
+    "Perjantai",
+    "Lauantai",
+    "Sunnuntai"][day] || "undefined";
+}
+
 function formatDish(menuDay: MenuDay) {
   const today = (new Date().getDay() + 6) % 7;
-  const day = menuDay.day;
+  const dayStr = getDayName(menuDay.day);
   let lines: string[] = [];
-  lines.push("**" + WEEKDAYS_FI[day] + "**")
+  lines.push("**" + dayStr + "**")
 
   for (let meal of menuDay.items) {
     lines.push(`${meal.mealtype}: ${meal.mealname}`);
@@ -132,7 +120,9 @@ async function getDishes(menu: any): Promise<Array<MenuDay>> {
 
 async function getMenuWeek() {
   const today = new Date(Date.now());
-  const data = await getMenuJson(formatDate(getMonday(today)), formatDate(getFriday(today)));
+  const monday = formatDate(getMonday(today));
+  const friday = formatDate(getFriday(today));
+  const data = await getMenuJson(monday, friday);
 
   return data;
 }

@@ -14,7 +14,6 @@ export async function execute(interaction: Interaction) {
 	const menu = await getWeek();
 	const embed = await buildEmbed(menu);
 	const buttons = await buildButtonsDay();
-	// await interaction.reply({embeds: [embed], components: [buttons]});
 	await interaction.reply({ embeds: [embed], components: [buttons] });
 }
 
