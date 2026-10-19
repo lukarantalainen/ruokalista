@@ -5,9 +5,14 @@ import { buildButtonsDay, buildEmbed } from "../../commands/utility/lyseo.js";
 
 export const name = "lyseo:previous";
 export async function execute(interaction: ButtonInteraction) {
-  const menu = await getMenuDayString(-1);
+  const day = interaction.client.lyseo.day;
+  if (0 < day) {
+    interaction.client.lyseo.day -= 1;
+  }
+  
+  const menu = await getMenuDayString(interaction.client.lyseo.day);
   const embed = await buildEmbed(menu);
-  const buttons = await buildButtonsDay();
+  const buttons = buildButtonsDay();
   await interaction.update({
     embeds: [embed],
     components: [buttons]

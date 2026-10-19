@@ -1,13 +1,34 @@
+import { TTLCache } from "@isaacs/ttlcache";
 import * as cheerio from "cheerio";
 
 export async function getWeek() {
-	return (await getMenu()).join("\n");
+	return (await getMenu()).join("");
 }
 
-async function getMenu(): Promise<string[]> {
-	const response = await fetch("https://www.gradia.fi/ravintola-priimus/opiskelija-ja-henkilostolounas");
+export async function getMenuDay(): Promise<string> {
+	const menu = await getMenu();
+	return menu[2] || "undefined";
+}
 
-	const html = await response.text();
+const options = {
+	max: 1,
+	ttl: 60 * 60 * 1000,
+};
+
+const cache = new TTLCache(options);
+
+async function getMenu(): Promise<string[]> {
+	const url = "https://www.gradia.fi/ravintola-priimus/opiskelija-ja-henkilostolounas";
+	
+	let html = "";
+	if (cache.has(url)) {
+		const result = cache.get(url);
+		html = (result) ? result as string : "";
+	} else {
+		const response = await fetch(url);
+		html = await response.text();
+		cache.set(url, html);
+	}
 	const menu = await parseMenu(html);
 
 	let days: string[] = [];
@@ -20,7 +41,6 @@ async function getMenu(): Promise<string[]> {
 		}
 		days.push(text);
 	}
-
 	return days;
 }
 
@@ -43,11 +63,13 @@ export async function parseMenu(html: string): Promise<{
 
 	$("div.field--item > p").each((_, element) => {
 		const strong = $(element).find("strong").first();
-		const day = strong.text().trim();
+		let day = strong.text().trim();
 
 		if (!days.includes(day)) {
 			return;
 		}
+
+		day = "**" + day + "**";
 
 		const dishes = $(element)
 			.html()!

@@ -13,11 +13,11 @@ export async function execute(interaction: Interaction) {
 	if (!interaction.isChatInputCommand()) return;
 	const menu = await getWeek();
 	const embed = await buildEmbed(menu);
-	const buttons = await buildButtonsDay();
+	const buttons = buildButtonsDay();
 	await interaction.reply({ embeds: [embed], components: [buttons] });
 }
 
-async function buildEmbed(menu: string): Promise<EmbedBuilder> {
+export async function buildEmbed(menu: string): Promise<EmbedBuilder> {
 	const exampleEmbed = new EmbedBuilder()
 		.setColor(0x4dbfbb)
 		.setTitle('Priimus ruokalista')
@@ -26,7 +26,7 @@ async function buildEmbed(menu: string): Promise<EmbedBuilder> {
 	return exampleEmbed;
 }
 
-async function buildButtonsDay(): Promise<ActionRowBuilder<ButtonBuilder>> {
+export function buildButtonsDay(): ActionRowBuilder<ButtonBuilder> {
 	const day = Day.createButton();
 	const previous = Previous.createButton();
 	const next = Next.createButton();

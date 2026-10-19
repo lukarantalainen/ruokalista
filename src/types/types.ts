@@ -31,3 +31,7 @@ export class MenuDay {
     this.items.push(item);
   }
 }
+
+export class Lyseo {
+  day: number = -1;
+}

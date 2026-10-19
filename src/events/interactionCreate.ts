@@ -3,6 +3,17 @@ import { Events, MessageFlags, type Interaction } from "discord.js";
 export const name = Events.InteractionCreate;
 
 export async function execute(interaction: Interaction) {
+  console.log(
+    "Interaction received:",
+    interaction.id,
+    interaction.type,
+    interaction.isChatInputCommand()
+      ? interaction.commandName
+      : interaction.isButton()
+        ? interaction.customId
+        : "other"
+  );
+
   if (interaction.isButton()) {
     const button = interaction.client.buttons.get(interaction.customId);
     if (!button) {

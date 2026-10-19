@@ -1,6 +1,6 @@
 import { EmbedBuilder, SlashCommandBuilder, ButtonBuilder, ActionRowBuilder } from "discord.js";
 import type { Interaction } from "discord.js";
-import { getMenuDayString } from "../../jamix/jamix.js";
+import { getMenuDayString, getToday } from "../../jamix/jamix.js";
 import * as Week from "../../buttons/lyseo/week.js";
 import * as Day from "../../buttons/lyseo/day.js";
 import * as Next from "../../buttons/lyseo/next.js";
@@ -10,9 +10,17 @@ import * as LyseoRefresh from "../../buttons/lyseo/refresh.js";
 export const data = new SlashCommandBuilder().setName('lyseo').setDescription('Lyseon ruokalista.');
 export async function execute(interaction: Interaction) {
   if (!interaction.isChatInputCommand()) return;
-  const menu = await getMenuDayString();
+  const today = getToday();
+  const menu = await getMenuDayString(today);
   const embed = await buildEmbed(menu);
-  const buttons = await buildButtonsDay();
+  const buttons = buildButtonsDay();
+
+  console.log({
+    command: interaction.commandName,
+    replied: interaction.replied,
+    deferred: interaction.deferred,
+  });
+
   await interaction.reply({ embeds: [embed], components: [buttons] });
 }
 
@@ -25,7 +33,7 @@ export async function buildEmbed(menu: string): Promise<EmbedBuilder> {
   return exampleEmbed;
 }
 
-export async function buildButtonsDay(): Promise<ActionRowBuilder<ButtonBuilder>> {
+export function buildButtonsDay(): ActionRowBuilder<ButtonBuilder> {
   const week = Week.createButton();
   const previous = Previous.createButton();
   const next = Next.createButton();
