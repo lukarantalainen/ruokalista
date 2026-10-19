@@ -5,6 +5,7 @@ import type { ClientEvent } from "./types/client-event.js";
 import { Collection } from "discord.js";
 import type { Client } from "discord.js";
 import type { Button } from "./types/button.js";
+import { Lyseo, Priimus } from "./types/types.js";
 
 export async function loadCommands(client: Client): Promise<void> {
   client.commands = new Collection();
@@ -29,6 +30,9 @@ export async function loadCommands(client: Client): Promise<void> {
 }
 
 export async function loadEvents(client: Client): Promise<void> {
+  client.lyseo = new Lyseo();
+  client.priimus = new Priimus();
+
   const eventsPath = path.join(import.meta.dirname, "events");
   const eventFiles = fs.readdirSync(eventsPath);
 

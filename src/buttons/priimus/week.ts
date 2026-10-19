@@ -1,10 +1,10 @@
 import { ButtonBuilder, ButtonInteraction, ButtonStyle } from "discord.js";
-import { getMenuWeekString } from "../../jamix/jamix.js";
-import { buildButtonsWeek, buildEmbed } from "../../commands/utility/lyseo.js";
+import { buildButtonsWeek, buildEmbed } from "../../commands/utility/priimus.js";
+import { getWeek } from "../../priimus/priimus.js";
 
-export const name = "lyseo:show-week";
+export const name = "priimus:show-week";
 export async function execute(interaction: ButtonInteraction) {
-  const menu = await getMenuWeekString();
+  const menu = await getWeek();
   const embed = await buildEmbed(menu);
   const buttons = await buildButtonsWeek();
   await interaction.update({

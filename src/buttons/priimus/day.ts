@@ -1,10 +1,12 @@
 import { ButtonBuilder, ButtonInteraction, ButtonStyle } from "discord.js";
 import { getMenuDay } from "../../priimus/priimus.js";
 import { buildButtonsDay, buildEmbed } from "../../commands/utility/priimus.js";
+import { getToday } from "../../jamix/jamix.js";
 
 export const name = "priimus:show-day";
 export async function execute(interaction: ButtonInteraction) {
-  const menu = await getMenuDay();
+  const today = getToday();
+  const menu = await getMenuDay(today);
   const embed = await buildEmbed(menu);
   const buttons = buildButtonsDay();
 

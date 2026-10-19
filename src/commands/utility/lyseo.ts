@@ -5,7 +5,7 @@ import * as Week from "../../buttons/lyseo/week.js";
 import * as Day from "../../buttons/lyseo/day.js";
 import * as Next from "../../buttons/lyseo/next.js";
 import * as Previous from "../../buttons/lyseo/previous.js";
-import * as LyseoRefresh from "../../buttons/lyseo/refresh.js";
+import * as Refresh from "../../buttons/lyseo/refresh.js";
 
 export const data = new SlashCommandBuilder().setName('lyseo').setDescription('Lyseon ruokalista.');
 export async function execute(interaction: Interaction) {
@@ -44,7 +44,7 @@ export function buildButtonsDay(): ActionRowBuilder<ButtonBuilder> {
 
 export async function buildButtonsWeek(): Promise<ActionRowBuilder<ButtonBuilder>> {
   const day = Day.createButton();
-  const refresh = LyseoRefresh.createButton();
+  const refresh = Refresh.createButton();
   const row = new ActionRowBuilder<ButtonBuilder>().addComponents(refresh, day);
 
   return row;

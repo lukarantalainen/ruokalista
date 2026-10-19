@@ -35,3 +35,7 @@ export class MenuDay {
 export class Lyseo {
   day: number = -1;
 }
+
+export class Priimus {
+  day: number = -1;
+}

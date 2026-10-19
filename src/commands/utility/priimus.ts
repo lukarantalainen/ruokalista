@@ -13,7 +13,7 @@ export async function execute(interaction: Interaction) {
 	if (!interaction.isChatInputCommand()) return;
 	const menu = await getWeek();
 	const embed = await buildEmbed(menu);
-	const buttons = buildButtonsDay();
+	const buttons = buildButtonsWeek();
 	await interaction.reply({ embeds: [embed], components: [buttons] });
 }
 
@@ -27,11 +27,20 @@ export async function buildEmbed(menu: string): Promise<EmbedBuilder> {
 }
 
 export function buildButtonsDay(): ActionRowBuilder<ButtonBuilder> {
-	const day = Day.createButton();
+	const week = Week.createButton();
 	const previous = Previous.createButton();
 	const next = Next.createButton();
-	const row = new ActionRowBuilder<ButtonBuilder>().addComponents(previous, next, day);
+	const row = new ActionRowBuilder<ButtonBuilder>().addComponents(previous, next, week);
 
 	return row;
 }
+
+export function buildButtonsWeek(): ActionRowBuilder<ButtonBuilder> {
+	const day = Day.createButton();
+	const refresh = Refresh.createButton();
+	const row = new ActionRowBuilder<ButtonBuilder>().addComponents(refresh, day);
+
+	return row;
+}
+
 
