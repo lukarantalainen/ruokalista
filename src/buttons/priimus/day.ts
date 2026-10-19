@@ -6,6 +6,8 @@ import { getToday } from "../../jamix/jamix.js";
 export const name = "priimus:show-day";
 export async function execute(interaction: ButtonInteraction) {
   const today = getToday();
+  interaction.client.priimus.day = today;
+
   const menu = await getMenuDay(today);
   const embed = await buildEmbed(menu);
   const buttons = buildButtonsDay();
