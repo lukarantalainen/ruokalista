@@ -12,18 +12,18 @@ export const data = new SlashCommandBuilder().setName('priimus').setDescription(
 export async function execute(interaction: Interaction) {
 	if (!interaction.isChatInputCommand()) return;
 	const menu = await getWeek();
-	const embed = await buildEmbed(menu);
+	const embed = buildEmbed(menu);
 	const buttons = buildButtonsWeek();
 	await interaction.reply({ embeds: [embed], components: [buttons] });
 }
 
-export async function buildEmbed(menu: string): Promise<EmbedBuilder> {
-	const exampleEmbed = new EmbedBuilder()
+export function buildEmbed(menu: string): EmbedBuilder {
+	const embed = new EmbedBuilder()
 		.setColor(0x4dbfbb)
 		.setTitle('Priimus ruokalista')
 		.setDescription(menu)
 
-	return exampleEmbed;
+	return embed;
 }
 
 export function buildButtonsDay(): ActionRowBuilder<ButtonBuilder> {

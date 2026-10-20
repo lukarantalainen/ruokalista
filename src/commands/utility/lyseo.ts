@@ -12,7 +12,7 @@ export async function execute(interaction: Interaction) {
   if (!interaction.isChatInputCommand()) return;
   const today = getToday();
   const menu = await getMenuDayString(today);
-  const embed = await buildEmbed(menu);
+  const embed = buildEmbed(menu);
   const buttons = buildButtonsDay();
 
   console.log({
@@ -24,13 +24,13 @@ export async function execute(interaction: Interaction) {
   await interaction.reply({ embeds: [embed], components: [buttons] });
 }
 
-export async function buildEmbed(menu: string): Promise<EmbedBuilder> {
-  const exampleEmbed = new EmbedBuilder()
+export function buildEmbed(menu: string): EmbedBuilder {
+  const embed = new EmbedBuilder()
     .setColor(0x16216a)
     .setTitle('Lyseo ruokalista')
     .setDescription(menu)
 
-  return exampleEmbed;
+  return embed;
 }
 
 export function buildButtonsDay(): ActionRowBuilder<ButtonBuilder> {

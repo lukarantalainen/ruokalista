@@ -8,7 +8,7 @@ export async function execute(interaction: ButtonInteraction) {
   interaction.client.lyseo.day = today;
 
   const menu = await getMenuDayString(today);
-  const embed = await buildEmbed(menu);
+  const embed = buildEmbed(menu);
   const buttons = buildButtonsDay();
   await interaction.update({
     embeds: [embed],

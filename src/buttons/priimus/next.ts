@@ -10,7 +10,7 @@ export async function execute(interaction: ButtonInteraction) {
     }
 
     const menu = await getMenuDay(interaction.client.priimus.day);
-    const embed = await buildEmbed(menu);
+    const embed = buildEmbed(menu);
     const buttons = buildButtonsDay();
     await interaction.update({
       embeds: [embed],

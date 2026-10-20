@@ -5,8 +5,8 @@ import { getWeek } from "../../priimus/priimus.js";
 export const name = "priimus:show-week";
 export async function execute(interaction: ButtonInteraction) {
   const menu = await getWeek();
-  const embed = await buildEmbed(menu);
-  const buttons = await buildButtonsWeek();
+  const embed = buildEmbed(menu);
+  const buttons = buildButtonsWeek();
   await interaction.update({
     embeds: [embed],
     components: [buttons]
