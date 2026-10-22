@@ -1,4 +1,5 @@
 import { Events, MessageFlags, type Interaction } from "discord.js";
+import { getButtonId } from "../utils.js";
 
 export const name = Events.InteractionCreate;
 
@@ -15,9 +16,10 @@ export async function execute(interaction: Interaction) {
   );
 
   if (interaction.isButton()) {
-    const button = interaction.client.buttons.get(interaction.customId);
+    const buttonId = getButtonId(interaction.customId);
+    const button = interaction.client.buttons.get(buttonId);
     if (!button) {
-      console.error(`No button matching ${interaction.customId} was found.`);
+      console.error(`No button matching ${buttonId} was found.`);
       return;
     }
     try {

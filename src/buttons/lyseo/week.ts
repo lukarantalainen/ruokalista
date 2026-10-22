@@ -1,6 +1,7 @@
 import { ButtonBuilder, ButtonInteraction, ButtonStyle } from "discord.js";
 import { getMenuWeekString } from "../../jamix/jamix.js";
 import { buildButtonsWeek, buildEmbed } from "../../commands/utility/lyseo.js";
+import { Button } from "../../types/button.js";
 
 export const name = "lyseo:show-week";
 export async function execute(interaction: ButtonInteraction) {
@@ -14,7 +15,7 @@ export async function execute(interaction: ButtonInteraction) {
 }
 
 
-export function createButton(): ButtonBuilder {
-  return new ButtonBuilder().setCustomId(name).setLabel("Näytä viikko").setStyle(ButtonStyle.Primary);
+export function createButton(): Button {
+  return new Button(name).setLabel("Näytä viikko").setStyle(ButtonStyle.Primary);
 }
 

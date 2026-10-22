@@ -1,11 +1,12 @@
-import { ButtonBuilder, ButtonInteraction, ButtonStyle } from "discord.js";
+import { ButtonInteraction, ButtonStyle } from "discord.js";
 import { getMenuDayString, getToday } from "../../jamix/jamix.js";
 import { buildButtonsDay, buildEmbed } from "../../commands/utility/lyseo.js";
+import { Button } from "../../types/button.js";
+import { getDateFromButton } from "../../utils.js";
 
 export const name = "lyseo:show-day";
 export async function execute(interaction: ButtonInteraction) {
-  const today = getToday();
-  interaction.client.lyseo.day = today;
+  const today = getDateFromButton(interaction.customId);
 
   const menu = await getMenuDayString(today);
   const embed = buildEmbed(menu);
@@ -16,7 +17,7 @@ export async function execute(interaction: ButtonInteraction) {
   });
 }
 
-export function createButton(): ButtonBuilder {
-  return new ButtonBuilder().setCustomId(name).setLabel("Näytä päivä").setStyle(ButtonStyle.Primary);
+export function createButton(): Button {
+  return new Button(name).setLabel("Näytä päivä").setStyle(ButtonStyle.Primary);
 }
 

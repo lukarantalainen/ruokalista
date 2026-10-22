@@ -1,25 +1,34 @@
-import { ButtonBuilder, ButtonStyle } from "discord.js";
-import type { ButtonInteraction } from "discord.js";
+import { ButtonStyle } from "discord.js";
+import { ActionRowBuilder, type ButtonInteraction } from "discord.js";
 import { getMenuDayString } from "../../jamix/jamix.js";
 import { buildButtonsDay, buildEmbed } from "../../commands/utility/lyseo.js";
+import { getDateFromButton } from "../../utils.js";
+import { Button } from "../../types/button.js";
+import * as Week from "../../buttons/lyseo/week.js";
+import * as Next from "../../buttons/lyseo/next.js";
 
 export const name = "lyseo:previous";
 export async function execute(interaction: ButtonInteraction) {
-  const day = interaction.client.lyseo.day;
-  if (0 < day) {
-    interaction.client.lyseo.day -= 1;
-  }
+  const date = getDateFromButton(interaction.customId);
   
-  const menu = await getMenuDayString(interaction.client.lyseo.day);
+  const menu = await getMenuDayString(date);
   const embed = buildEmbed(menu);
-  const buttons = buildButtonsDay();
+  const buttons = updateButtons();
   await interaction.update({
     embeds: [embed],
     components: [buttons]
   });
 }
 
-export function createButton(): ButtonBuilder {
-  return new ButtonBuilder().setCustomId(name).setLabel("Edellinen").setStyle(ButtonStyle.Secondary);
+export function createButton(): Button {
+  return new Button(name).setLabel("Edellinen").setStyle(ButtonStyle.Secondary);
 }
 
+function updateButtons(): ActionRowBuilder<Button> {
+  const week = Week.createButton();
+  const previous = createButton().incrementDay();
+  const next = Next.createButton().incrementDay();
+
+  const row = new ActionRowBuilder<Button>().addComponents(previous, next, week);
+  return row;
+}

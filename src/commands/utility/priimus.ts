@@ -1,11 +1,9 @@
-import { EmbedBuilder, SlashCommandBuilder, ButtonBuilder, ActionRowBuilder, ButtonStyle } from "discord.js";
+import { EmbedBuilder, SlashCommandBuilder, ActionRowBuilder } from "discord.js";
 import type { Interaction } from "discord.js";
 import { getWeek } from "../../priimus/priimus.js";
 import * as Day from "../../buttons/priimus/day.js";
-import * as Week from "../../buttons/priimus/week.js";
-import * as Next from "../../buttons/priimus/next.js";
-import * as Previous from "../../buttons/priimus/previous.js";
 import * as Refresh from "../../buttons/priimus/refresh.js";
+import type { Button } from "../../types/button.js";
 
 export const data = new SlashCommandBuilder().setName('priimus').setDescription('Priimuksen ruokalista tälle päivälle.');
 
@@ -26,21 +24,10 @@ export function buildEmbed(menu: string): EmbedBuilder {
 	return embed;
 }
 
-export function buildButtonsDay(): ActionRowBuilder<ButtonBuilder> {
-	const week = Week.createButton();
-	const previous = Previous.createButton();
-	const next = Next.createButton();
-	const row = new ActionRowBuilder<ButtonBuilder>().addComponents(previous, next, week);
-
-	return row;
-}
-
-export function buildButtonsWeek(): ActionRowBuilder<ButtonBuilder> {
+export function buildButtonsWeek(): ActionRowBuilder<Button> {
 	const day = Day.createButton();
 	const refresh = Refresh.createButton();
-	const row = new ActionRowBuilder<ButtonBuilder>().addComponents(refresh, day);
+	const row = new ActionRowBuilder<Button>().addComponents(refresh, day);
 
 	return row;
 }
-
-

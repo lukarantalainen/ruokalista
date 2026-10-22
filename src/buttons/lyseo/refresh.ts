@@ -1,6 +1,7 @@
 import { ButtonBuilder, ButtonStyle, type ButtonInteraction } from "discord.js";
 import { getMenuWeekString } from "../../jamix/jamix.js";
 import { buildButtonsWeek, buildEmbed } from "../../commands/utility/lyseo.js";
+import { Button } from "../../types/button.js";
 
 export const name = "lyseo:refresh";
 export async function execute(interaction: ButtonInteraction) {
@@ -13,6 +14,6 @@ export async function execute(interaction: ButtonInteraction) {
     });
 }
 
-export function createButton(): ButtonBuilder {
-  return new ButtonBuilder().setCustomId(name).setLabel("Päivitä").setStyle(ButtonStyle.Secondary);
+export function createButton(): Button {
+  return new Button(name).setLabel("Päivitä").setStyle(ButtonStyle.Secondary);
 }

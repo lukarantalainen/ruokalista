@@ -4,8 +4,7 @@ import path from "node:path";
 import type { ClientEvent } from "./types/client-event.js";
 import { Collection } from "discord.js";
 import type { Client } from "discord.js";
-import type { Button } from "./types/button.js";
-import { Lyseo, Priimus } from "./types/types.js";
+import type { ButtonInterface } from "./types/button.js";
 
 export async function loadCommands(client: Client): Promise<void> {
   client.commands = new Collection();
@@ -30,9 +29,6 @@ export async function loadCommands(client: Client): Promise<void> {
 }
 
 export async function loadEvents(client: Client): Promise<void> {
-  client.lyseo = new Lyseo();
-  client.priimus = new Priimus();
-
   const eventsPath = path.join(import.meta.dirname, "events");
   const eventFiles = fs.readdirSync(eventsPath);
 
@@ -60,7 +56,7 @@ export async function loadButtons(client: Client): Promise<void> {
 
     for (const file of buttonFiles) {
       const filePath = path.join(buttonsPath, file);
-      const button: Button = await import(filePath);
+      const button: ButtonInterface = await import(filePath);
 
       if ("name" in button && "execute" in button) {
         client.buttons.set(button.name, button);

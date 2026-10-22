@@ -1,4 +1,4 @@
-import { EmbedBuilder, SlashCommandBuilder, ButtonBuilder, ActionRowBuilder } from "discord.js";
+import { EmbedBuilder, SlashCommandBuilder, ActionRowBuilder } from "discord.js";
 import type { Interaction } from "discord.js";
 import { getMenuDayString, getToday } from "../../jamix/jamix.js";
 import * as Week from "../../buttons/lyseo/week.js";
@@ -6,6 +6,7 @@ import * as Day from "../../buttons/lyseo/day.js";
 import * as Next from "../../buttons/lyseo/next.js";
 import * as Previous from "../../buttons/lyseo/previous.js";
 import * as Refresh from "../../buttons/lyseo/refresh.js";
+import type { Button } from "../../types/button.js";
 
 export const data = new SlashCommandBuilder().setName('lyseo').setDescription('Lyseon ruokalista.');
 export async function execute(interaction: Interaction) {
@@ -33,19 +34,19 @@ export function buildEmbed(menu: string): EmbedBuilder {
   return embed;
 }
 
-export function buildButtonsDay(): ActionRowBuilder<ButtonBuilder> {
+export function buildButtonsDay(): ActionRowBuilder<Button> {
   const week = Week.createButton();
   const previous = Previous.createButton();
   const next = Next.createButton();
-  const row = new ActionRowBuilder<ButtonBuilder>().addComponents(previous, next, week);
+  const row = new ActionRowBuilder<Button>().addComponents(previous, next, week);
 
   return row;
 }
 
-export async function buildButtonsWeek(): Promise<ActionRowBuilder<ButtonBuilder>> {
+export async function buildButtonsWeek(): Promise<ActionRowBuilder<Button>> {
   const day = Day.createButton();
   const refresh = Refresh.createButton();
-  const row = new ActionRowBuilder<ButtonBuilder>().addComponents(refresh, day);
+  const row = new ActionRowBuilder<Button>().addComponents(refresh, day);
 
   return row;
 }

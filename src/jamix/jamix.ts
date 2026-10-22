@@ -1,5 +1,6 @@
 import { TTLCache } from "@isaacs/ttlcache";
 import { Day, MenuDay, MenuItem } from "../types/types.js";
+import { formatDate } from "../utils.js";
 
 export function getToday() {
   return (new Date().getDay() + 6) % 7;
@@ -61,11 +62,6 @@ function getFriday(date: Date): Date {
   const diff = (date.getDay() === 0) ? -2 : 5 - date.getDay();
   friday.setDate(date.getDate() + diff);
   return friday;
-}
-
-function formatDate(date: Date): string {
-  const dateStr = date?.toISOString()?.split('T')[0]?.replaceAll('-', '');
-  return (dateStr || "");
 }
 
 function getDayName(day: Day): string {

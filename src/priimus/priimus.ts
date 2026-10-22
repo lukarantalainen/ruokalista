@@ -2,12 +2,15 @@ import { TTLCache } from "@isaacs/ttlcache";
 import * as cheerio from "cheerio";
 import type { Day } from "../types/types.js";
 
-export async function getWeek() {
-	return (await getMenu()).join("");
+export async function getWeek(): Promise<string> {
+	const menu = await getMenu();
+	const menuStr = (menu.length > 0) ? menu.join("") : "Error: menu empty";
+	return menuStr;
 }
 
 export async function getMenuDay(day: Day): Promise<string> {
 	const menu = await getMenu();
+	console.log("menu: " + menu + " day: " + day);
 	return menu[day] || "undefined";
 }
 
