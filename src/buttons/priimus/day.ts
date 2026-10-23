@@ -2,14 +2,14 @@ import { ActionRowBuilder, ButtonInteraction, ButtonStyle } from "discord.js";
 import { getMenuDay } from "../../priimus/priimus.js";
 import { buildEmbed } from "../../commands/utility/priimus.js";
 import { Button } from "../../types/button.js";
-import { getDateFromButton } from "../../utils.js";
+import { getDayFromButton } from "../../utils.js";
 import * as Week from "../../buttons/priimus/week.js";
 import * as Next from "../../buttons/priimus/next.js";
 import * as Previous from "../../buttons/priimus/previous.js";
 
 export const name = "priimus:show-day";
 export async function execute(interaction: ButtonInteraction) {
-  const today = getDateFromButton(interaction.customId);
+  const today = getDayFromButton(interaction.customId);
 
   const menu = await getMenuDay(today);
   const embed = buildEmbed(menu);

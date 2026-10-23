@@ -21,10 +21,9 @@ export class Button extends ButtonBuilder {
     return this;
   }
 
-  incrementDay(): Button {
-    let date = new Date();
+  incrementDay(date: Date): Button {
     if (date.getDay() < 4) {
-      date.setDate(date.getDate() + 1);
+      date.setDate(date.getDate());
     }
 
     const dateStr = formatDate(date);
@@ -33,10 +32,9 @@ export class Button extends ButtonBuilder {
     return this;
   }
 
-  decrementDay(): Button {
-    let date = new Date();
+  decrementDay(date: Date): Button {
     if (0 < date.getDay()) {
-      date.setDate(date.getDate() + 1);
+      date.setDate(date.getDate());
     }
 
     const dateStr = formatDate(date);
